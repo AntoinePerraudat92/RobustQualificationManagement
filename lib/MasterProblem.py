@@ -107,4 +107,4 @@ class MasterProblem:
         return float(np.sum([[float(self.dataset.qualification_costs[product][factory]) * self.get_qualification_decision(product=product, factory=factory) for factory in range(self.dataset.nmb_factories)] for product in range(self.dataset.nmb_products)]))
 
     def get_lost_sales(self, scenario: int) -> float:
-        return float(np.sum([self.model.val(self.lost_sales_variables[self.LostSalesVariable(scenario=scenario, product=product)]) for product in range(self.dataset.nmb_products)]))
+        return float(np.sum([float(self.dataset.lost_sales_costs[product]) * self.model.val(self.lost_sales_variables[self.LostSalesVariable(scenario=scenario, product=product)]) for product in range(self.dataset.nmb_products)]))
