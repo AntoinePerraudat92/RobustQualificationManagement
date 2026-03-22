@@ -21,7 +21,6 @@ class MyTestCase(TestCase):
 
         master_problem: MasterProblem = MasterProblem(dataset)
         master_problem.add_scenario(demand_scenario=demand_scenario)
-
         master_problem.solve()
 
         self.assertAlmostEqual(0.0, master_problem.get_lost_sales(scenario=0))
@@ -44,7 +43,6 @@ class MyTestCase(TestCase):
 
         master_problem: MasterProblem = MasterProblem(dataset)
         master_problem.add_scenario(demand_scenario=demand_scenario)
-
         master_problem.solve()
 
         self.assertAlmostEqual(120.0, master_problem.get_lost_sales(scenario=0))
@@ -66,7 +64,6 @@ class MyTestCase(TestCase):
         master_problem: MasterProblem = MasterProblem(dataset)
         master_problem.add_scenario(demand_scenario=first_demand_scenario)
         master_problem.add_scenario(demand_scenario=second_demand_scenario)
-
         master_problem.solve()
 
         self.assertAlmostEqual(0.0, master_problem.get_lost_sales(scenario=0))
