@@ -1,24 +1,25 @@
 from dataclasses import dataclass
 
 import highspy
+import numpy as np
 
 from lib.Dataset import Dataset
 from lib.DemandScenario import DemandScenario
 
 
 class MasterProblem:
-    @dataclass
+    @dataclass(frozen=True, eq=True)
     class QualificationVariable:
         product: int
         factory: int
 
-    @dataclass
+    @dataclass(frozen=True, eq=True)
     class WorkloadVariable:
         scenario: int
         product: int
         factory: int
 
-    @dataclass
+    @dataclass(frozen=True, eq=True)
     class LostSalesVariable:
         scenario: int
         product: int
@@ -39,7 +40,7 @@ class MasterProblem:
                                                  obj=float(self.dataset.qualification_costs[product][factory]))
 
     def add_qualification_variables(self, product: int, factory: int, obj: float) -> None:
-        self.lost_sales_variables[self.QualificationVariable(product=product, factory=factory)] = self.model.addBinary(
+        self.qualification_variables[self.QualificationVariable(product=product, factory=factory)] = self.model.addBinary(
             obj=obj)
 
     def add_lost_sales_variable(self, product: int) -> None:
@@ -71,7 +72,10 @@ class MasterProblem:
                 x = self.workload_variables[
                     self.WorkloadVariable(scenario=self.scenario, product=product, factory=factory)]
                 oq = self.qualification_variables[self.QualificationVariable(product=product, factory=factory)]
-                self.model.addConstr(x <= float(demand_scenario.product_demands[product]) * oq)
+                if int(self.dataset.qualification_matrix[product][factory]) == 1:
+                    self.model.addConstr(x <= float(demand_scenario.product_demands[product]) * oq)
+                else:
+                    self.model.addConstr(x <= 0.0)
 
         # Lost sales constraints.
         for product in range(self.dataset.nmb_products):
@@ -95,3 +99,12 @@ class MasterProblem:
 
     def solve(self):
         self.model.solve()
+
+    def get_qualification_decision(self, product: int, factory: int) -> int:
+        return 1 if self.model.val(self.qualification_variables[self.QualificationVariable(product=product, factory=factory)]) > 0.5 else 0
+
+    def get_qualification_costs(self) -> float:
+        return float(np.sum([[float(self.dataset.qualification_costs[product][factory]) * self.get_qualification_decision(product=product, factory=factory) for factory in range(self.dataset.nmb_factories)] for product in range(self.dataset.nmb_products)]))
+
+    def get_lost_sales(self, scenario: int) -> float:
+        return float(np.sum([self.model.val(self.lost_sales_variables[self.LostSalesVariable(scenario=scenario, product=product)]) for product in range(self.dataset.nmb_products)]))

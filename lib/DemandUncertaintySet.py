@@ -3,7 +3,7 @@ from numpy.typing import NDArray
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(frozen=True, eq=True)
 class DemandUncertaintySet:
     demand_lower_bounds: NDArray[np.float64]
     demand_upper_bounds: NDArray[np.float64]

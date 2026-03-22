@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from lib.DemandUncertaintySet import DemandUncertaintySet
 
 
-@dataclass
+@dataclass(frozen=True, eq=True)
 class DemandScenario:
     product_demands: NDArray[np.float64]
 
