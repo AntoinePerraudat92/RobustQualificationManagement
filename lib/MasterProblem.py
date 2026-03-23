@@ -101,6 +101,9 @@ class MasterProblem:
     def solve(self):
         self.model.solve()
 
+    def get_objective_function(self) -> float:
+        return self.get_qualification_costs() + self.model.val(self.eta)
+
     def get_qualification_matrix(self) -> NDArray[np.int64]:
         return np.array([[self.get_qualification_decision(product=product, factory=factory) for factory in range(self.dataset.nmb_factories)] for product in range(self.dataset.nmb_products)], dtype=np.float64)
 

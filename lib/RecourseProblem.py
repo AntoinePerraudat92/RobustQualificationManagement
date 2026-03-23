@@ -30,6 +30,7 @@ class RecourseProblem:
     def __init__(self, dataset: Dataset):
         self.dataset = dataset
         self.model = highspy.Highs()
+        self.model.silent()
         self.model.setMinimize()
         self.workload_variables = {}
         self.lost_sales_variables = {}
