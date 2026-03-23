@@ -72,3 +72,26 @@ class Test(TestCase):
         self.assertAlmostEqual(0.0, master_problem.get_qualification_decision(product=0, factory=1))
         self.assertAlmostEqual(0.0, master_problem.get_qualification_decision(product=1, factory=0))
         self.assertAlmostEqual(1.0, master_problem.get_qualification_decision(product=1, factory=1))
+
+    def test_simple_problem_where_factories_qualified_for_two_products(self):
+        nmb_products = 3
+        nmb_factories = 2
+        qualification_matrix = np.array([[1, 1], [1, 1], [1, 1]], dtype=np.float64)
+        qualification_costs = np.array([[1, 0.1], [0.1, 0.1], [0.1, 0.1]], dtype=np.float64)
+        lost_sales_cost = np.array([100, 100, 100], dtype=np.float64)
+        factory_capacities = np.array([30, 30], dtype=np.float64)
+        dataset: Dataset = Dataset(nmb_products, nmb_factories, qualification_matrix, qualification_costs, lost_sales_cost, factory_capacities)
+        demand_scenario: DemandScenario = DemandScenario(product_demands=np.array([30, 10, 10], dtype=np.float64))
+
+        master_problem: MasterProblem = MasterProblem(dataset)
+        master_problem.add_scenario(demand_scenario=demand_scenario)
+        master_problem.solve()
+
+        self.assertAlmostEqual(0.0, master_problem.get_lost_sales(scenario=0))
+        self.assertAlmostEqual(0.30, master_problem.get_qualification_costs())
+        self.assertAlmostEqual(0.0, master_problem.get_qualification_decision(product=0, factory=0))
+        self.assertAlmostEqual(1.0, master_problem.get_qualification_decision(product=0, factory=1))
+        self.assertAlmostEqual(1.0, master_problem.get_qualification_decision(product=1, factory=0))
+        self.assertAlmostEqual(0.0, master_problem.get_qualification_decision(product=1, factory=1))
+        self.assertAlmostEqual(1.0, master_problem.get_qualification_decision(product=2, factory=0))
+        self.assertAlmostEqual(0.0, master_problem.get_qualification_decision(product=2, factory=1))
