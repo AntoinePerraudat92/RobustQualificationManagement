@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import highspy
 import numpy as np
+from numpy.typing import NDArray
 
 from lib.Dataset import Dataset
 from lib.DemandScenario import DemandScenario
@@ -52,7 +53,7 @@ class MasterProblem:
             self.WorkloadVariable(scenario=self.scenario, product=product, factory=factory)] = self.model.addVariable()
 
     def add_scenario(self, demand_scenario: DemandScenario) -> None:
-        # Workload variables.
+        # Variables.
         for product in range(self.dataset.nmb_products):
             for factory in range(self.dataset.nmb_factories):
                 self.add_workload_variable(product=product, factory=factory)
@@ -99,6 +100,9 @@ class MasterProblem:
 
     def solve(self):
         self.model.solve()
+
+    def get_qualification_matrix(self) -> NDArray[np.int64]:
+        return np.array([[self.get_qualification_decision(product=product, factory=factory) for factory in range(self.dataset.nmb_factories)] for product in range(self.dataset.nmb_products)], dtype=np.float64)
 
     def get_qualification_decision(self, product: int, factory: int) -> int:
         return 1 if self.model.val(self.qualification_variables[self.QualificationVariable(product=product, factory=factory)]) > 0.5 else 0
