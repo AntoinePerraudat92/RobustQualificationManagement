@@ -7,8 +7,8 @@ from lib.DemandUncertaintySet import DemandUncertaintySet
 
 def main(seed: int):
     local_rng = np.random.default_rng(seed=seed)
-    nmb_products = 70
-    nmb_factories = 10
+    nmb_products = 300
+    nmb_factories = 12
 
     # Generate demand.
     demand_lower_bounds = local_rng.uniform(300.0, 1000.0, size=(nmb_products,))
@@ -28,8 +28,11 @@ def main(seed: int):
     dataset: Dataset = Dataset(nmb_products, nmb_factories, qualification_matrix, qualification_costs, lost_sales_cost,
                                factory_capacities)
 
+    # Solve two-stage robust optimization problem.
     solver: CCGSolver = CCGSolver(dataset, 500, uncertainty_set)
     solver.solve()
+    qualification_costs = solver.get_qualification_costs()
+    print(f"Qualification costs: {qualification_costs}")
 
 
 if __name__ == '__main__':

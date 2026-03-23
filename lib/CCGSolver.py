@@ -51,5 +51,6 @@ class CCGSolver:
             gap = compute_gap(lb=lb, ub=ub)
             print(f"lb: {lb}, ub: {ub}, gap: {gap}")
         print('Solving process done')
-        print('Qualification matrix:')
-        print(self.master_problem.get_qualification_matrix())
+
+    def get_qualification_costs(self) -> float:
+        return self.master_problem.get_qualification_costs()
