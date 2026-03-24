@@ -4,8 +4,8 @@ import highspy
 import numpy as np
 from numpy.typing import NDArray
 
-from lib.data_model.Dataset import Dataset
-from lib.data_model.DemandScenario import DemandScenario
+from src.data_model.Dataset import Dataset
+from src.data_model.DemandScenario import DemandScenario
 
 
 class MasterProblem:

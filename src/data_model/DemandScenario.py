@@ -3,7 +3,7 @@ from numpy.typing import NDArray
 
 from dataclasses import dataclass
 
-from lib.data_model.DemandUncertaintySet import DemandUncertaintySet
+from src.data_model.DemandUncertaintySet import DemandUncertaintySet
 
 
 @dataclass(frozen=True, eq=True)

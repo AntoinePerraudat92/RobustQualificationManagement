@@ -2,9 +2,9 @@ from unittest import TestCase
 
 import numpy as np
 
-from lib.data_model.Dataset import Dataset
-from lib.data_model.DemandScenario import DemandScenario
-from lib.solver.MasterProblem import MasterProblem
+from src.data_model.Dataset import Dataset
+from src.data_model.DemandScenario import DemandScenario
+from src.solver.MasterProblem import MasterProblem
 
 
 class Test(TestCase):

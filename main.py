@@ -1,9 +1,9 @@
 import numpy as np
 
-from lib.solver.CCGSolver import CCGSolver
-from lib.data_model.Dataset import Dataset
-from lib.data_model.DemandScenario import DemandScenario, generate_random_demand_scenario
-from lib.data_model.DemandUncertaintySet import DemandUncertaintySet
+from src.solver.CCGSolver import CCGSolver
+from src.data_model.Dataset import Dataset
+from src.data_model.DemandScenario import DemandScenario, generate_random_demand_scenario
+from src.data_model.DemandUncertaintySet import DemandUncertaintySet
 
 
 def main(seed: int):
