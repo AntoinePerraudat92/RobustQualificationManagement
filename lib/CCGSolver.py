@@ -30,7 +30,7 @@ class CCGSolver:
         nmb_scenarios = len(self.demand_scenarios)
         # We need an initial solution to get the qualification matrix. We use the first scenario by default as
         # the baseline.
-        self.master_problem.add_scenario(self.demand_scenarios[0])
+        self.master_problem.add_scenario(demand_scenario=self.demand_scenarios[0])
         self.master_problem.solve()
         while gap > 1E-4:
             qualification_matrix: NDArray[np.int64] = self.master_problem.get_qualification_matrix()
@@ -49,7 +49,7 @@ class CCGSolver:
             print(f'Worst scenario: {worst_scenario}, worst lost sales: {worst_lost_sales}')
 
             print('Solving master problem...')
-            self.master_problem.add_scenario(self.demand_scenarios[worst_scenario])
+            self.master_problem.add_scenario(demand_scenario=self.demand_scenarios[worst_scenario])
             self.master_problem.solve()
 
             lb = self.master_problem.get_objective_function()

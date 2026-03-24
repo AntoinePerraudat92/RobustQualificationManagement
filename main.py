@@ -11,8 +11,8 @@ def main(seed: int):
     nmb_factories = 12
 
     # Generate demand.
-    demand_lower_bounds = local_rng.uniform(300.0, 1000.0, size=(nmb_products,))
-    demand_upper_bounds = demand_lower_bounds + local_rng.uniform(300.0, 1000.0, size=(nmb_products,))
+    demand_lower_bounds = local_rng.uniform(0.0, 1000.0, size=(nmb_products,))
+    demand_upper_bounds = demand_lower_bounds + local_rng.uniform(10.0, 1000.0, size=(nmb_products,))
     maximum_total_demand = np.sum(0.5 * (demand_lower_bounds + demand_upper_bounds))
     uncertainty_set: DemandUncertaintySet = DemandUncertaintySet(demand_lower_bounds=demand_lower_bounds,
                                                                  demand_upper_bounds=demand_upper_bounds,
