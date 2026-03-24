@@ -1,4 +1,4 @@
-name: Run Tests
+name: Run Two Stage Robust Optimization Example
 
 on:
   push:
