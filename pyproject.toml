@@ -3,9 +3,9 @@ requires = ["setuptools>=80.9.0", "wheel>=0.46.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "Two-stage Robust Qualification Management"
+name = "RobustQualificationManagement"
 version = "0.1.0"
-description = "Implementation of column-and-constraint generation approach to solve simplified qualification management problem"
+description = "Implementation of column-and-constraint generation approach to solve simplified stochastic qualification management problem"
 authors = [
     {name = "Antoine Perraudat", email = "antoine.perraudat@outlook.fr"},
 ]
