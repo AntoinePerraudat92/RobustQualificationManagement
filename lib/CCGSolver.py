@@ -28,7 +28,9 @@ class CCGSolver:
         gap = compute_gap(lb=lb, ub=ub)
         print(f"lb: {lb}, ub: {ub}, gap: {gap}")
         nmb_scenarios = len(self.demand_scenarios)
-        # We need an initial solution to get the qualification matrix.
+        # We need an initial solution to get the qualification matrix. We use the first scenario by default as
+        # the baseline.
+        self.master_problem.add_scenario(self.demand_scenarios[0])
         self.master_problem.solve()
         while gap > 1E-4:
             qualification_matrix: NDArray[np.int64] = self.master_problem.get_qualification_matrix()
