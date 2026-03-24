@@ -11,7 +11,7 @@ from src.solver.RecourseProblem import RecourseProblem
 
 def compute_gap(lb: float, ub: float) -> float:
     if abs(lb) == math.inf or abs(ub) == math.inf:
-        return 10
+        return 100
     return abs(ub - lb) / (lb + 1E-10) * 100
 
 
