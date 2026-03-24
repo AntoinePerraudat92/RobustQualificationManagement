@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import numpy as np
 
-from lib.DemandScenario import generate_random_demand_scenario
+from lib.data_model.DemandScenario import generate_random_demand_scenario
 from lib.DemandUncertaintySet import DemandUncertaintySet
 
 

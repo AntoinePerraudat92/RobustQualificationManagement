@@ -4,8 +4,8 @@ import highspy
 import numpy as np
 from numpy.typing import NDArray
 
-from lib.Dataset import Dataset
-from lib.DemandScenario import DemandScenario
+from lib.data_model.Dataset import Dataset
+from lib.data_model.DemandScenario import DemandScenario
 
 
 class RecourseProblem:
