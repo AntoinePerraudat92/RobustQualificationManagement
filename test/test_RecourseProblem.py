@@ -4,7 +4,7 @@ import numpy as np
 
 from lib.data_model.Dataset import Dataset
 from lib.data_model.DemandScenario import DemandScenario
-from lib.RecourseProblem import RecourseProblem
+from lib.solver.RecourseProblem import RecourseProblem
 
 
 class Test(TestCase):

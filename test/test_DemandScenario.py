@@ -3,7 +3,7 @@ from unittest import TestCase
 import numpy as np
 
 from lib.data_model.DemandScenario import generate_random_demand_scenario
-from lib.DemandUncertaintySet import DemandUncertaintySet
+from lib.data_model.DemandUncertaintySet import DemandUncertaintySet
 
 
 class Test(TestCase):

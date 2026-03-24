@@ -1,12 +1,12 @@
 from lib.data_model.Dataset import Dataset
 from lib.data_model.DemandScenario import DemandScenario
-from lib.MasterProblem import MasterProblem
+from lib.solver.MasterProblem import MasterProblem
 from tqdm import tqdm
 import numpy as np
 import math
 from numpy.typing import NDArray
 
-from lib.RecourseProblem import RecourseProblem
+from lib.solver.RecourseProblem import RecourseProblem
 
 
 def compute_gap(lb: float, ub: float) -> float:
