@@ -28,7 +28,7 @@ class Test(TestCase):
 
     def test_simple_problem_with_one_product_and_no_factory(self):
         nmb_products = 1
-        nmb_factories = 1
+        nmb_factories = 0
         qualification_matrix = np.array([[0]], dtype=np.float64)
         qualification_costs = np.array([[2]], dtype=np.float64)
         lost_sales_cost = np.array([10], dtype=np.float64)
