@@ -10,6 +10,7 @@ class RecourseProblem:
     def __init__(self, dataset: Dataset):
         self.dataset = dataset
         self.model = pyo.ConcreteModel()
+        self.solver = pyo.SolverFactory('appsi_highs')
         self.model.products = pyo.Set(initialize=[product for product in range(self.dataset.nmb_products)])
         self.model.factories = pyo.Set(initialize=[factory for factory in range(self.dataset.nmb_factories)])
         self.model.workload_variables = pyo.Var(self.model.products, self.model.factories, domain=pyo.NonNegativeReals)
@@ -46,8 +47,7 @@ class RecourseProblem:
             self.model.demand[product] = demand_scenario.product_demands[product]
             for factory in self.model.factories:
                 self.model.qualification_rhs[product, factory] = demand_scenario.product_demands[product] * qualification_matrix[product][factory]
-        solver = pyo.SolverFactory('appsi_highs')
-        results = solver.solve(self.model)
+        results = self.solver.solve(self.model)
         return (results.solver.termination_condition == pyo.TerminationCondition.optimal
                 or results.solver.termination_condition == pyo.TerminationCondition.feasible)
 
