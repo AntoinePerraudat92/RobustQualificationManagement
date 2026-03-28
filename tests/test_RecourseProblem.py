@@ -39,8 +39,9 @@ class Test(TestCase):
 
         recourse_problem: RecourseProblem = RecourseProblem(dataset)
         recourse_problem.build(qualification_matrix, demand_scenario)
-        recourse_problem.solve()
+        feasible = recourse_problem.solve()
 
+        self.assertTrue(feasible)
         self.assertAlmostEqual(40.0, recourse_problem.get_lost_sales())
 
     def test_simple_problem_with_two_product_and_one_factory(self):
@@ -56,6 +57,7 @@ class Test(TestCase):
 
         recourse_problem: RecourseProblem = RecourseProblem(dataset)
         recourse_problem.build(qualification_matrix, demand_scenario)
-        recourse_problem.solve()
+        feasible = recourse_problem.solve()
 
+        self.assertTrue(feasible)
         self.assertAlmostEqual(500.0, recourse_problem.get_lost_sales())

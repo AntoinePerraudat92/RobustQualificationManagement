@@ -3,70 +3,55 @@ from dataclasses import dataclass
 import highspy
 import numpy as np
 from numpy.typing import NDArray
+import pyomo.environ as pyo
 
 from src.data_model.Dataset import Dataset
 from src.data_model.DemandScenario import DemandScenario
 
 
 class RecourseProblem:
-    @dataclass(frozen=True, eq=True)
-    class WorkloadVariable:
-        product: int
-        factory: int
-
-    @dataclass(frozen=True, eq=True)
-    class LostSalesVariable:
-        product: int
-
-    @dataclass(frozen=True, eq=True)
-    class QualificationConstraint:
-        product: int
-        factory: int
-
-    @dataclass(frozen=True, eq=True)
-    class LostSalesConstraint:
-        product: int
-
     def __init__(self, dataset: Dataset):
         self.dataset = dataset
-        self.model = highspy.Highs()
-        self.model.silent()
-        self.model.setMinimize()
-        self.workload_variables = {}
-        self.lost_sales_variables = {}
+        self.model = pyo.ConcreteModel()
+        self.model.products = pyo.Set(initialize=[product for product in range(self.dataset.nmb_products)])
+        self.model.factories = pyo.Set(initialize=[factory for factory in range(self.dataset.nmb_factories)])
+        self.model.workload_variables = pyo.Var(self.model.products, self.model.factories, domain=pyo.NonNegativeReals)
+        self.model.lost_sales_variables = pyo.Var(self.model.products, domain=pyo.NonNegativeReals)
 
     def build(self, qualification_matrix: NDArray[np.int64], demand_scenario: DemandScenario):
-        # Variables.
-        for product in range(self.dataset.nmb_products):
-            for factory in range(self.dataset.nmb_factories):
-                self.workload_variables[
-                    self.WorkloadVariable(product=product, factory=factory)] = self.model.addVariable()
-            obj = float(self.dataset.lost_sales_costs[product])
-            self.lost_sales_variables[self.LostSalesVariable(product=product)] = self.model.addVariable(obj=obj)
+        # Objective function.
+        def objective_function_rule(model):
+            return sum(self.dataset.lost_sales_costs[p] * model.lost_sales_variables[p] for p in model.products)
 
-        # Flow constraints.
-        for factory in range(self.dataset.nmb_factories):
-            expr = self.model.expr()
-            for product in range(self.dataset.nmb_products):
-                expr += self.workload_variables[self.WorkloadVariable(product=product, factory=factory)]
-            self.model.addConstr(expr <= self.dataset.factory_capacities[factory])
+        self.model.objective = pyo.Objective(rule=objective_function_rule, sense=pyo.minimize)
+
+        # Capacity constraints.
+        def capacity_constraints_rule(model, factory):
+            return sum(model.workload_variables[product, factory] for product in self.model.products) <= float(
+                self.dataset.factory_capacities[factory])
+
+        self.model.flow_constraint = pyo.Constraint(self.model.factories, rule=capacity_constraints_rule)
 
         # Qualification constraints.
-        for product in range(self.dataset.nmb_products):
-            for factory in range(self.dataset.nmb_factories):
-                x = self.workload_variables[self.WorkloadVariable(product=product, factory=factory)]
-                self.model.addConstr(x <= float(demand_scenario.product_demands[product]) * float(qualification_matrix[product][factory]))
+        def qualification_constraints_rule(model, product, factory):
+            return model.workload_variables[product, factory] <= float(
+                demand_scenario.product_demands[product]) * float(qualification_matrix[product, factory])
+
+        self.model.qualification_constraint = pyo.Constraint(self.model.products, self.model.factories,
+                                                             rule=qualification_constraints_rule)
 
         # Lost sales constraints.
-        for product in range(self.dataset.nmb_products):
-            expr = self.model.expr()
-            expr += self.lost_sales_variables[self.LostSalesVariable(product=product)]
-            for factory in range(self.dataset.nmb_factories):
-                expr += self.workload_variables[self.WorkloadVariable(product=product, factory=factory)]
-            self.model.addConstr(expr == float(demand_scenario.product_demands[product]))
+        def lost_sales_constraints_rule(model, product):
+            return model.lost_sales_variables[product] + sum(
+                model.workload_variables[product, factory] for factory in self.model.factories) == float(
+                demand_scenario.product_demands[product])
 
-    def solve(self):
-        self.model.solve()
+        self.model.lost_sales_constraint = pyo.Constraint(self.model.products, rule=lost_sales_constraints_rule)
+
+    def solve(self) -> bool:
+        solver = pyo.SolverFactory('highs')
+        results = solver.solve(self.model)
+        return results.solver.termination_condition == pyo.TerminationCondition.optimal or results.solver.termination_condition == pyo.TerminationCondition.feasible
 
     def get_lost_sales(self) -> float:
-        return float(np.sum([float(self.dataset.lost_sales_costs[product]) * self.model.val(self.lost_sales_variables[self.LostSalesVariable(product=product)]) for product in range(self.dataset.nmb_products)]))
+        return pyo.value(self.model.objective)
