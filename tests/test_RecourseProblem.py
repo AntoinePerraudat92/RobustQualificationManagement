@@ -21,9 +21,9 @@ class Test(TestCase):
         demand_scenario: DemandScenario = DemandScenario(product_demands=np.array([4], dtype=np.float64))
 
         recourse_problem: RecourseProblem = RecourseProblem(dataset)
-        recourse_problem.build(qualification_matrix, demand_scenario)
-        recourse_problem.solve()
+        feasible = recourse_problem.solve(qualification_matrix=qualification_matrix, demand_scenario=demand_scenario)
 
+        self.assertTrue(feasible)
         self.assertAlmostEqual(20.0, recourse_problem.get_lost_sales())
 
     def test_simple_problem_with_one_product_and_no_factory(self):
@@ -38,8 +38,7 @@ class Test(TestCase):
         demand_scenario: DemandScenario = DemandScenario(product_demands=np.array([4], dtype=np.float64))
 
         recourse_problem: RecourseProblem = RecourseProblem(dataset)
-        recourse_problem.build(qualification_matrix, demand_scenario)
-        feasible = recourse_problem.solve()
+        feasible = recourse_problem.solve(qualification_matrix=qualification_matrix, demand_scenario=demand_scenario)
 
         self.assertTrue(feasible)
         self.assertAlmostEqual(40.0, recourse_problem.get_lost_sales())
@@ -56,8 +55,7 @@ class Test(TestCase):
         demand_scenario: DemandScenario = DemandScenario(product_demands=np.array([5, 40], dtype=np.float64))
 
         recourse_problem: RecourseProblem = RecourseProblem(dataset)
-        recourse_problem.build(qualification_matrix, demand_scenario)
-        feasible = recourse_problem.solve()
+        feasible = recourse_problem.solve(qualification_matrix=qualification_matrix, demand_scenario=demand_scenario)
 
         self.assertTrue(feasible)
         self.assertAlmostEqual(500.0, recourse_problem.get_lost_sales())

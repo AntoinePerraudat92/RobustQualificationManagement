@@ -22,6 +22,7 @@ class CCGSolver:
         self.master_problem: MasterProblem = MasterProblem(self.dataset)
 
     def solve(self, demand_scenarios: list[DemandScenario]):
+        recourse_problem: RecourseProblem = RecourseProblem(self.dataset)
         lb: float = -math.inf
         ub: float = math.inf
         gap = compute_gap(lb=lb, ub=ub)
@@ -33,10 +34,8 @@ class CCGSolver:
 
             print('Solving recourse problems...')
             for scenario in tqdm(range(nmb_scenarios)):
-                recourse_problem: RecourseProblem = RecourseProblem(self.dataset)
-                recourse_problem.build(qualification_matrix=qualification_matrix,
+                recourse_problem.solve(qualification_matrix=qualification_matrix,
                                        demand_scenario=demand_scenarios[scenario])
-                recourse_problem.solve()
                 lost_sales[scenario] = recourse_problem.get_lost_sales()
 
             worst_scenario = int(np.argmax(lost_sales))
