@@ -6,7 +6,7 @@ from src.data_model.DemandScenario import generate_random_demand_scenario
 from src.data_model.DemandUncertaintySet import DemandUncertaintySet
 
 
-class Test(TestCase):
+class DemandScenarioTest(TestCase):
 
     def test_generate_random_demand_scenario(self):
         nmb_products = 3

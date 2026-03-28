@@ -7,7 +7,7 @@ from src.data_model.DemandScenario import DemandScenario
 from src.solver.RecourseProblem import RecourseProblem
 
 
-class Test(TestCase):
+class RecourseProblemTest(TestCase):
 
     def test_simple_problem_with_one_product_and_one_factory(self):
         nmb_products = 1

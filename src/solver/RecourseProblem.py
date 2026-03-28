@@ -7,6 +7,7 @@ from src.data_model.DemandScenario import DemandScenario
 
 
 class RecourseProblem:
+    
     def __init__(self, dataset: Dataset):
         self.dataset = dataset
         self.model = pyo.ConcreteModel()

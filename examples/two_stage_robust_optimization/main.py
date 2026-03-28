@@ -1,6 +1,4 @@
 import numpy as np
-import sys
-from pathlib import Path
 
 from src.solver.CCGSolver import CCGSolver
 from src.data_model.Dataset import Dataset
