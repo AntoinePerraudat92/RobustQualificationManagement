@@ -49,7 +49,7 @@ class RecourseProblem:
         self.model.lost_sales_constraint = pyo.Constraint(self.model.products, rule=lost_sales_constraints_rule)
 
     def solve(self) -> bool:
-        solver = pyo.SolverFactory('highs')
+        solver = pyo.SolverFactory('appsi_highs')
         results = solver.solve(self.model)
         return results.solver.termination_condition == pyo.TerminationCondition.optimal or results.solver.termination_condition == pyo.TerminationCondition.feasible
 
