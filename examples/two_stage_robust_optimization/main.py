@@ -38,7 +38,9 @@ def main(seed: int):
     solver: CCGSolver = CCGSolver(dataset)
     solver.solve(demand_scenarios=demand_scenarios)
     qualification_costs = solver.get_qualification_costs()
+    lost_sales = solver.get_lost_sales()
     print(f"Qualification costs: {qualification_costs}")
+    print(f"Lost sales: {lost_sales}")
 
 
 if __name__ == '__main__':

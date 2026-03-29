@@ -23,7 +23,7 @@ class MasterProblemTest(TestCase):
         master_problem.add_scenario(demand_scenario=demand_scenario)
         master_problem.solve()
 
-        self.assertAlmostEqual(0.0, master_problem.get_lost_sales(scenario=0))
+        self.assertAlmostEqual(0.0, master_problem.get_worst_case_lost_sales())
         self.assertAlmostEqual(0.5, master_problem.get_qualification_costs())
         self.assertAlmostEqual(0.0, master_problem.get_qualification_decision(product=0, factory=0))
         self.assertAlmostEqual(0.0, master_problem.get_qualification_decision(product=0, factory=1))
@@ -45,7 +45,7 @@ class MasterProblemTest(TestCase):
         master_problem.add_scenario(demand_scenario=demand_scenario)
         master_problem.solve()
 
-        self.assertAlmostEqual(120.0, master_problem.get_lost_sales(scenario=0))
+        self.assertAlmostEqual(120.0, master_problem.get_worst_case_lost_sales())
         self.assertAlmostEqual(5.0, master_problem.get_qualification_costs())
         self.assertAlmostEqual(1.0, master_problem.get_qualification_decision(product=0, factory=0))
         self.assertAlmostEqual(0.0, master_problem.get_qualification_decision(product=1, factory=0))
@@ -66,7 +66,7 @@ class MasterProblemTest(TestCase):
         master_problem.add_scenario(demand_scenario=second_demand_scenario)
         master_problem.solve()
 
-        self.assertAlmostEqual(0.0, master_problem.get_lost_sales(scenario=0))
+        self.assertAlmostEqual(0.0, master_problem.get_worst_case_lost_sales())
         self.assertAlmostEqual(2.0, master_problem.get_qualification_costs())
         self.assertAlmostEqual(1.0, master_problem.get_qualification_decision(product=0, factory=0))
         self.assertAlmostEqual(0.0, master_problem.get_qualification_decision(product=0, factory=1))
@@ -87,7 +87,7 @@ class MasterProblemTest(TestCase):
         master_problem.add_scenario(demand_scenario=demand_scenario)
         master_problem.solve()
 
-        self.assertAlmostEqual(0.0, master_problem.get_lost_sales(scenario=0))
+        self.assertAlmostEqual(0.0, master_problem.get_worst_case_lost_sales())
         self.assertAlmostEqual(0.30, master_problem.get_qualification_costs())
         self.assertAlmostEqual(0.0, master_problem.get_qualification_decision(product=0, factory=0))
         self.assertAlmostEqual(1.0, master_problem.get_qualification_decision(product=0, factory=1))
