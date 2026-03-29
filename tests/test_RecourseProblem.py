@@ -5,6 +5,7 @@ import numpy as np
 from src.data_model.Dataset import Dataset
 from src.data_model.DemandScenario import DemandScenario
 from src.solver.RecourseProblem import RecourseProblem
+from src.solver.DualRecourseProblem import DualRecourseProblem
 
 
 class RecourseProblemTest(TestCase):
@@ -22,9 +23,13 @@ class RecourseProblemTest(TestCase):
 
         recourse_problem: RecourseProblem = RecourseProblem(dataset)
         feasible = recourse_problem.solve(qualification_matrix=qualification_matrix, demand_scenario=demand_scenario)
-
         self.assertTrue(feasible)
         self.assertAlmostEqual(20.0, recourse_problem.get_lost_sales())
+
+        dual_recourse_problem: DualRecourseProblem = DualRecourseProblem(dataset)
+        feasible = dual_recourse_problem.solve(qualification_matrix=qualification_matrix, demand_scenario=demand_scenario)
+        self.assertTrue(feasible)
+        self.assertAlmostEqual(20.0, dual_recourse_problem.get_lost_sales())
 
     def test_simple_problem_with_one_product_and_no_factory(self):
         nmb_products = 1
@@ -39,9 +44,13 @@ class RecourseProblemTest(TestCase):
 
         recourse_problem: RecourseProblem = RecourseProblem(dataset)
         feasible = recourse_problem.solve(qualification_matrix=qualification_matrix, demand_scenario=demand_scenario)
-
         self.assertTrue(feasible)
         self.assertAlmostEqual(40.0, recourse_problem.get_lost_sales())
+
+        dual_recourse_problem: DualRecourseProblem = DualRecourseProblem(dataset)
+        feasible = dual_recourse_problem.solve(qualification_matrix=qualification_matrix, demand_scenario=demand_scenario)
+        self.assertTrue(feasible)
+        self.assertAlmostEqual(40.0, dual_recourse_problem.get_lost_sales())
 
     def test_simple_problem_with_two_product_and_one_factory(self):
         nmb_products = 2
@@ -56,6 +65,10 @@ class RecourseProblemTest(TestCase):
 
         recourse_problem: RecourseProblem = RecourseProblem(dataset)
         feasible = recourse_problem.solve(qualification_matrix=qualification_matrix, demand_scenario=demand_scenario)
-
         self.assertTrue(feasible)
         self.assertAlmostEqual(500.0, recourse_problem.get_lost_sales())
+
+        dual_recourse_problem: DualRecourseProblem = DualRecourseProblem(dataset)
+        feasible = dual_recourse_problem.solve(qualification_matrix=qualification_matrix, demand_scenario=demand_scenario)
+        self.assertTrue(feasible)
+        self.assertAlmostEqual(500.0, dual_recourse_problem.get_lost_sales())
