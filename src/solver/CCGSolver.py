@@ -22,21 +22,23 @@ class CCGSolver:
         self.master_problem: MasterProblem = MasterProblem(self.dataset)
 
     def solve(self, demand_scenarios: list[DemandScenario]):
+        recourse_problem: RecourseProblem = RecourseProblem(self.dataset)
         lb: float = -math.inf
         ub: float = math.inf
         gap = compute_gap(lb=lb, ub=ub)
         print(f"lb: {lb}, ub: {ub}, gap: {gap} (%)")
         nmb_scenarios = len(demand_scenarios)
+        # We solve the master problem for any scenario to have meaningful qualification decisions for the recourse problem.
+        self.master_problem.add_scenario(demand_scenario=demand_scenarios[0])
+        self.master_problem.solve()
         while gap > 1E-4:
             qualification_matrix: NDArray[np.int64] = self.master_problem.get_qualification_matrix()
-            lost_sales: NDArray[np.float64] = np.zeros(shape=nmb_scenarios, dtype=np.float64)
+            lost_sales: NDArray[np.float64] = np.zeros(shape=(nmb_scenarios,), dtype=np.float64)
 
             print('Solving recourse problems...')
             for scenario in tqdm(range(nmb_scenarios)):
-                recourse_problem: RecourseProblem = RecourseProblem(self.dataset)
-                recourse_problem.build(qualification_matrix=qualification_matrix,
+                recourse_problem.solve(qualification_matrix=qualification_matrix,
                                        demand_scenario=demand_scenarios[scenario])
-                recourse_problem.solve()
                 lost_sales[scenario] = recourse_problem.get_lost_sales()
 
             worst_scenario = int(np.argmax(lost_sales))
@@ -56,3 +58,6 @@ class CCGSolver:
 
     def get_qualification_costs(self) -> float:
         return self.master_problem.get_qualification_costs()
+
+    def get_lost_sales(self) -> float:
+        return self.master_problem.get_worst_case_lost_sales()
