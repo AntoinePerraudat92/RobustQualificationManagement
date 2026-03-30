@@ -1,7 +1,5 @@
-
 from examples.dataset.InstanceGenerator import generate_instance
 from src.solver.stochastic.BendersDecompositionSolver import BendersDecompositionSolver
-
 
 
 def main(seed: int):

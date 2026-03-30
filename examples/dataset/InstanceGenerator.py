@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import numpy as np
 
 from src.data_model.Dataset import Dataset
@@ -5,7 +7,7 @@ from src.data_model.DemandScenario import DemandScenario, generate_random_demand
 from src.data_model.DemandUncertaintySet import DemandUncertaintySet
 
 
-def generate_instance(seed: int):
+def generate_instance(seed: int) -> Tuple[Dataset, list[DemandScenario]]:
     # Problem dimension.
     nmb_scenarios = 50
     nmb_products = 30
@@ -34,4 +36,4 @@ def generate_instance(seed: int):
     dataset: Dataset = Dataset(nmb_products, nmb_factories, qualification_matrix, qualification_costs, lost_sales_cost,
                                factory_capacities)
 
-    return dataset, uncertainty_set
+    return dataset, demand_scenarios

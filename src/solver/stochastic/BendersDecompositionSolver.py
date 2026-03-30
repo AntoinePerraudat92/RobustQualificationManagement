@@ -49,7 +49,7 @@ class BendersDecompositionSolver:
                                                               rule=qualification_constraint_rule)
 
     def run(self):
-        results = self.solver.solve(self.model, tee=True)
+        results = self.solver.solve(self.model)
         return (results.solver.termination_condition == pyo.TerminationCondition.optimal
                 or results.solver.termination_condition == pyo.TerminationCondition.feasible)
 
