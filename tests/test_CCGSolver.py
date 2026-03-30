@@ -4,7 +4,7 @@ import numpy as np
 
 from src.data_model.Dataset import Dataset
 from src.data_model.DemandScenario import DemandScenario
-from src.solver.CCGSolver import CCGSolver
+from src.solver.robust.CCGSolver import CCGSolver
 
 
 class CCGSolverTest(TestCase):

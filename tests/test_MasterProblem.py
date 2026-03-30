@@ -4,7 +4,7 @@ import numpy as np
 
 from src.data_model.Dataset import Dataset
 from src.data_model.DemandScenario import DemandScenario
-from src.solver.MasterProblem import MasterProblem
+from src.solver.robust.MasterProblem import MasterProblem
 
 
 class MasterProblemTest(TestCase):

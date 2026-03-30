@@ -4,8 +4,8 @@ import numpy as np
 
 from src.data_model.Dataset import Dataset
 from src.data_model.DemandScenario import DemandScenario
-from src.solver.RecourseProblem import RecourseProblem
-from src.solver.DualRecourseProblem import DualRecourseProblem
+from src.solver.robust.RecourseProblem import RecourseProblem
+from src.solver.stochastic.DualRecourseProblem import DualRecourseProblem
 
 
 class RecourseProblemTest(TestCase):

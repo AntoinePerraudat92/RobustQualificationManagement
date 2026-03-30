@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.solver.CCGSolver import CCGSolver
+from src.solver import CCGSolver
 from src.data_model.Dataset import Dataset
 from src.data_model.DemandScenario import DemandScenario, generate_random_demand_scenario
 from src.data_model.DemandUncertaintySet import DemandUncertaintySet
