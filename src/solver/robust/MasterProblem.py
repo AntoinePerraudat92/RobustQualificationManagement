@@ -28,8 +28,8 @@ class MasterProblem:
         # Add variables common to all scenarios.
         self.model.eta = pyo.Var()
         self.model.qualification_variables = pyo.Var(self.model.products, self.model.factories, within=pyo.Binary)
-        self.model.workload_variables = pyo.VarList(within=pyo.NonNegativeReals)
-        self.model.lost_sales_variables = pyo.VarList(within=pyo.NonNegativeReals)
+        self.model.workload_variables = pyo.VarList(within=pyo.PositiveReals)
+        self.model.lost_sales_variables = pyo.VarList(within=pyo.PositiveReals)
         self.model.constraints = pyo.ConstraintList()
 
         # Objective function.
@@ -39,8 +39,6 @@ class MasterProblem:
                 for product in model.products for factory in model.factories)
 
         self.model.objective = pyo.Objective(rule=objective_function_rule, sense=pyo.minimize)
-
-        self.scenario = 0
 
     def add_scenario(self, demand_scenario: DemandScenario) -> None:
         workload_variables_dict = dict()
@@ -74,14 +72,14 @@ class MasterProblem:
         for product in self.model.products:
             demand = float(demand_scenario.product_demands[product])
             self.model.constraints.add(lost_sale_variables_dict[self.LostSalesVariable(product=product)] + sum(
-                    workload_variables_dict[self.WorkloadVariable(product=product, factory=factory)] for factory in
-                    self.model.factories) == demand)
+                workload_variables_dict[self.WorkloadVariable(product=product, factory=factory)] for factory in
+                self.model.factories) == demand)
 
         # Objective function constraint.
         self.model.constraints.add(self.model.eta >= sum(
-                self.dataset.lost_sales_costs[product] * lost_sale_variables_dict[self.LostSalesVariable(product=product)] for product in
-                self.model.products))
-        self.scenario += 1
+            self.dataset.lost_sales_costs[product] * lost_sale_variables_dict[self.LostSalesVariable(product=product)]
+            for product in
+            self.model.products))
 
     def solve(self):
         results = self.solver.solve(self.model)
@@ -91,13 +89,14 @@ class MasterProblem:
     def get_objective_function(self) -> float:
         return pyo.value(self.model.objective)
 
-    def get_qualification_matrix(self) -> NDArray[np.int64]:
+    def get_qualification_matrix(self) -> NDArray[np.float64]:
         return np.array(
-            [[1 if self.model.qualification_variables[product, factory].value > 0.5 else 0 for factory in self.model.factories] for
-             product in self.model.products], dtype=np.int64)
+            [[self.model.qualification_variables[product, factory].value for factory in
+              self.model.factories] for
+             product in self.model.products], dtype=np.float64)
 
     def get_qualification_decision(self, product: int, factory: int) -> int:
-        return 1 if self.model.qualification_variables[product, factory].value > 0.5 else 0
+        return self.model.qualification_variables[product, factory].value
 
     def get_qualification_costs(self) -> float:
         return pyo.value(self.model.objective) - self.model.eta.value

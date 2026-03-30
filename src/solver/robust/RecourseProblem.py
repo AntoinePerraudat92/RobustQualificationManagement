@@ -14,8 +14,8 @@ class RecourseProblem:
         self.solver = pyo.SolverFactory('appsi_highs')
         self.model.products = pyo.Set(initialize=[product for product in range(self.dataset.nmb_products)])
         self.model.factories = pyo.Set(initialize=[factory for factory in range(self.dataset.nmb_factories)])
-        self.model.workload_variables = pyo.Var(self.model.products, self.model.factories, within=pyo.NonNegativeReals)
-        self.model.lost_sales_variables = pyo.Var(self.model.products, within=pyo.NonNegativeReals)
+        self.model.workload_variables = pyo.Var(self.model.products, self.model.factories, within=pyo.PositiveReals)
+        self.model.lost_sales_variables = pyo.Var(self.model.products, within=pyo.PositiveReals)
 
         self.model.demand = pyo.Param(self.model.products, within=pyo.Reals, mutable=True)
         self.model.qualification_rhs = pyo.Param(self.model.products, self.model.factories, within=pyo.Reals,
@@ -49,7 +49,7 @@ class RecourseProblem:
 
         self.model.lost_sales_constraint = pyo.Constraint(self.model.products, rule=lost_sales_constraints_rule)
 
-    def solve(self, qualification_matrix: NDArray[np.int64], demand_scenario: DemandScenario) -> bool:
+    def solve(self, qualification_matrix: NDArray[np.float64], demand_scenario: DemandScenario) -> bool:
         for product in self.model.products:
             self.model.demand[product] = demand_scenario.product_demands[product]
             for factory in self.model.factories:

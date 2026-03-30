@@ -1,12 +1,12 @@
-from src.data_model.Dataset import Dataset
-from src.data_model.DemandScenario import DemandScenario
-from src.solver.MasterProblem import MasterProblem
 from tqdm import tqdm
 import numpy as np
-import math
 from numpy.typing import NDArray
+import math
 
-from src.solver.RecourseProblem import RecourseProblem
+from src.solver.robust.RecourseProblem import RecourseProblem
+from src.data_model.Dataset import Dataset
+from src.data_model.DemandScenario import DemandScenario
+from src.solver.robust.MasterProblem import MasterProblem
 
 
 def compute_gap(lb: float, ub: float) -> float:
@@ -32,7 +32,7 @@ class CCGSolver:
         self.master_problem.add_scenario(demand_scenario=demand_scenarios[0])
         self.master_problem.solve()
         while gap > 1E-4:
-            qualification_matrix: NDArray[np.int64] = self.master_problem.get_qualification_matrix()
+            qualification_matrix: NDArray[np.float64] = self.master_problem.get_qualification_matrix()
             lost_sales: NDArray[np.float64] = np.zeros(shape=(nmb_scenarios,), dtype=np.float64)
 
             print('Solving recourse problems...')
