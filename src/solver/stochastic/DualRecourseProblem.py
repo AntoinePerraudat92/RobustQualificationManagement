@@ -15,8 +15,8 @@ class DualRecourseProblem:
         self.model.products = pyo.Set(initialize=[product for product in range(self.dataset.nmb_products)])
         self.model.factories = pyo.Set(initialize=[factory for factory in range(self.dataset.nmb_factories)])
         self.model.W = pyo.Var(self.model.products, within=pyo.Reals)
-        self.model.Y = pyo.Var(self.model.factories, within=pyo.NonNegativeReals)
-        self.model.Z = pyo.Var(self.model.products, self.model.factories, within=pyo.NonNegativeReals)
+        self.model.Y = pyo.Var(self.model.factories, within=pyo.PositiveReals)
+        self.model.Z = pyo.Var(self.model.products, self.model.factories, within=pyo.PositiveReals)
 
         self.model.demand = pyo.Param(self.model.products, within=pyo.Reals, mutable=True)
         self.model.q = pyo.Param(self.model.products, self.model.factories, within=pyo.Reals, mutable=True)
@@ -45,7 +45,7 @@ class DualRecourseProblem:
         self.model.dual_lost_sale_variables_constraint = pyo.Constraint(self.model.products,
                                                                         rule=dual_lost_sale_variables_rule)
 
-    def solve(self, qualification_matrix: NDArray[np.int64], demand_scenario: DemandScenario) -> bool:
+    def solve(self, qualification_matrix: NDArray[np.float64], demand_scenario: DemandScenario) -> bool:
         for product in self.model.products:
             self.model.demand[product] = demand_scenario.product_demands[product]
             for factory in self.model.factories:
@@ -59,8 +59,10 @@ class DualRecourseProblem:
         return pyo.value(self.model.objective)
 
     def get_benders_cut_constant(self) -> float:
-        return sum(self.model.demand[product].value * self.model.W[product].value for product in self.model.products) + sum(
+        return sum(
+            self.model.demand[product].value * self.model.W[product].value for product in self.model.products) + sum(
             -self.dataset.factory_capacities[factory] * self.model.Y[factory].value for factory in self.model.factories)
 
     def get_benders_cut_coefficients(self) -> NDArray[np.float64]:
-        return np.array([[self.model.Z[product, factory].value for factory in self.model.factories] for product in self.model.products], dtype=np.float64)
+        return np.array([[self.model.demand[product].value * self.model.Z[product, factory].value for factory in
+                          self.model.factories] for product in self.model.products], dtype=np.float64)

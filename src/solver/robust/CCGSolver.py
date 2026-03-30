@@ -32,7 +32,7 @@ class CCGSolver:
         self.master_problem.add_scenario(demand_scenario=demand_scenarios[0])
         self.master_problem.solve()
         while gap > 1E-4:
-            qualification_matrix: NDArray[np.int64] = self.master_problem.get_qualification_matrix()
+            qualification_matrix: NDArray[np.float64] = self.master_problem.get_qualification_matrix()
             lost_sales: NDArray[np.float64] = np.zeros(shape=(nmb_scenarios,), dtype=np.float64)
 
             print('Solving recourse problems...')

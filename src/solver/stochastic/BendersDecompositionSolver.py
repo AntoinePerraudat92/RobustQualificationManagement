@@ -29,7 +29,7 @@ class BendersDecompositionSolver:
         self.model.factories = pyo.Set(initialize=[factory for factory in range(self.dataset.nmb_factories)])
 
         self.model.qualification_variables = pyo.Var(self.model.products, self.model.factories, within=pyo.Binary)
-        self.model.thetas = pyo.Var(self.model.scenarios, within=pyo.NonNegativeReals)
+        self.model.thetas = pyo.Var(self.model.scenarios, within=pyo.PositiveReals)
         self.model.cuts = pyo.ConstraintList()
 
         # Objective function.
@@ -41,19 +41,25 @@ class BendersDecompositionSolver:
 
         self.model.objective = pyo.Objective(rule=objective_function_rule, sense=pyo.minimize)
 
+        # Qualification constraints.
+        def qualification_constraint_rule(model, product, factory):
+            return model.qualification_variables[product, factory] <= self.dataset.qualification_matrix[product][factory]
+
+        self.model.qualification_constraints = pyo.Constraint(self.model.products, self.model.factories,
+                                                              rule=qualification_constraint_rule)
+
     def run(self):
         results = self.solver.solve(self.model, tee=True)
         return (results.solver.termination_condition == pyo.TerminationCondition.optimal
                 or results.solver.termination_condition == pyo.TerminationCondition.feasible)
 
     def get_qualification_decision(self, product: int, factory: int) -> int:
-        return 1 if self.model.qualification_variables[product, factory].value > 0.5 else 0
+        return self.model.qualification_variables[product, factory].value
 
-    def get_qualification_matrix(self) -> NDArray[np.int64]:
+    def get_qualification_matrix(self) -> NDArray[np.float64]:
         return np.array(
-            [[1 if self.model.qualification_variables[product, factory].value > 0.5 else 0 for factory in
-              self.model.factories] for
-             product in self.model.products], dtype=np.int64)
+            [[self.get_qualification_decision(product=product, factory=factory) for factory in self.model.factories] for
+             product in self.model.products], dtype=np.float64)
 
     def get_qualification_costs(self) -> float:
         return pyo.value(self.model.objective) - self.get_lost_sales()
@@ -66,9 +72,7 @@ class BendersDecompositionSolver:
         constant = recourse_problem.get_benders_cut_constant()
         coefficients = recourse_problem.get_benders_cut_coefficients()
         self.model.cuts.add(self.model.thetas[scenario] >= constant + sum(
-            -coefficients[product][factory]
-            * self.demand_scenarios[scenario].product_demands[product] * self.model.qualification_variables[
-                product, factory] for product in
+            -coefficients[product][factory] * self.model.qualification_variables[product, factory] for product in
             self.model.products for factory in self.model.factories))
 
     def solve(self):
@@ -82,7 +86,7 @@ class BendersDecompositionSolver:
         # We solve the master problem for any scenario to have meaningful qualification decisions for the recourse problem.
         self.run()
         while gap > 1E-4:
-            qualification_matrix: NDArray[np.int64] = self.get_qualification_matrix()
+            qualification_matrix: NDArray[np.float64] = self.get_qualification_matrix()
             lost_sales: NDArray[np.float64] = np.zeros(shape=(nmb_scenarios,), dtype=np.float64)
 
             print('Solving recourse problems...')
