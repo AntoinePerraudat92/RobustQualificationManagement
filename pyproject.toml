@@ -10,8 +10,9 @@ authors = [
     {name = "Antoine Perraudat", email = "antoine.perraudat@outlook.fr"},
 ]
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.12"
 dependencies = [
+    "pytest>=9.0.2",
     "numpy>=2.4.3",
     "highspy>=1.13.1",
     "tqdm>=4.67.1",
