@@ -7,12 +7,7 @@ from src.solver.robust.RecourseProblem import RecourseProblem
 from src.data_model.Dataset import Dataset
 from src.data_model.DemandScenario import DemandScenario
 from src.solver.robust.MasterProblem import MasterProblem
-
-
-def compute_gap(lb: float, ub: float) -> float:
-    if abs(lb) == math.inf or abs(ub) == math.inf:
-        return 100
-    return abs(ub - lb) / (lb + 1E-10) * 100
+from src.util.gap_util import compute_gap
 
 
 class CCGSolver:

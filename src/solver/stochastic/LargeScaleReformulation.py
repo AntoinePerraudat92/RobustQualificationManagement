@@ -38,8 +38,7 @@ class BendersDecompositionSolver:
 
         # Qualification constraints.
         def qualification_constraint_rule(model, product, factory):
-            return model.qualification_variables[product, factory] <= self.dataset.qualification_matrix[product][
-                factory]
+            return model.qualification_variables[product, factory] <= self.dataset.qualification_matrix[product][factory]
 
         self.model.qualification_constraints = pyo.Constraint(self.model.products, self.model.factories,
                                                               rule=qualification_constraint_rule)
