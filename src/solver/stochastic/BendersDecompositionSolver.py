@@ -44,7 +44,7 @@ class BendersDecompositionSolver:
         self.model.qualification_constraints = pyo.Constraint(self.model.products, self.model.factories,
                                                               rule=qualification_constraint_rule)
 
-    def run(self):
+    def run(self) -> bool:
         results = self.solver.solve(self.model)
         return (results.solver.termination_condition == pyo.TerminationCondition.optimal
                 or results.solver.termination_condition == pyo.TerminationCondition.feasible)

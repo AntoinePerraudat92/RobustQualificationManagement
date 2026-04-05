@@ -13,6 +13,7 @@ class LargeScaleReformulationSolver:
         self.demand_scenarios = demand_scenarios
         self.model = pyo.ConcreteModel()
         self.solver = pyo.SolverFactory('appsi_highs')
+        self.solver.options['time_limit'] = 60
         nmb_scenarios = len(demand_scenarios)
         self.proba_per_scenario = 1.0 / float(nmb_scenarios)
         self.w = w
@@ -73,7 +74,8 @@ class LargeScaleReformulationSolver:
         # Expected value constraints.
         def expected_value_constraint_rule(model, scenario):
             return model.thetas[scenario] >= sum(
-                model.lost_sale_variables[scenario, product] for product in model.products)
+                self.dataset.lost_sales_costs[product] * model.lost_sale_variables[scenario, product] for product in
+                model.products)
 
         self.model.expected_value_constraints = pyo.Constraint(self.model.scenarios,
                                                                rule=expected_value_constraint_rule)
@@ -90,8 +92,8 @@ class LargeScaleReformulationSolver:
 
         self.model.cvar_constraint_2 = pyo.Constraint(rule=cvar_constraint_rule)
 
-    def solve(self):
-        results = self.solver.solve(self.model)
+    def solve(self) -> bool:
+        results = self.solver.solve(self.model, tee=True)
         return (results.solver.termination_condition == pyo.TerminationCondition.optimal
                 or results.solver.termination_condition == pyo.TerminationCondition.feasible)
 
