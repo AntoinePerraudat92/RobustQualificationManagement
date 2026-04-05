@@ -9,7 +9,7 @@ from src.data_model.DemandUncertaintySet import DemandUncertaintySet
 
 def generate_instance(seed: int) -> Tuple[Dataset, list[DemandScenario]]:
     # Problem dimension.
-    nmb_scenarios = 500
+    nmb_scenarios = 50
     nmb_products = 30
     nmb_factories = 5
 
