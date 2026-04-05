@@ -27,7 +27,7 @@ def test_simple_problem_with_one_qualification():
     assert 0.0 == pytest.approx(solver.get_cvar())
 
 
-@pytest.mark.parametrize("w", [0.0, 0.25, 0.5, 0.75, 1.0])
+@pytest.mark.parametrize("w", [0.0, 0.25, 0.50, 0.75, 1.0])
 @pytest.mark.parametrize("alpha", [0.01, 0.10, 0.90, 0.99])
 def test_simple_problem_with_lost_sales(w, alpha):
     nmb_products = 1
@@ -42,9 +42,37 @@ def test_simple_problem_with_lost_sales(w, alpha):
     demand_scenarios = [demand_scenario]
 
     solver: LargeScaleReformulationSolver = LargeScaleReformulationSolver(dataset=dataset,
-                                                                          demand_scenarios=demand_scenarios)
+                                                                          demand_scenarios=demand_scenarios,
+                                                                          w=w,
+                                                                          alpha=alpha)
     solver.solve()
 
     assert 1.0 == pytest.approx(solver.get_qualification_costs())
-    assert 40.0 == pytest.approx(solver.get_expected_lost_sales())
-    assert 40.0 == pytest.approx(solver.get_cvar())
+    assert 80.0 == pytest.approx(solver.get_expected_lost_sales())
+    assert 80.0 == pytest.approx(solver.get_cvar())
+
+
+def test_simple_problem_with_three_scenarios():
+    nmb_products = 1
+    nmb_factories = 1
+    qualification_matrix = np.array([[1]], dtype=np.float64)
+    qualification_costs = np.array([[1]], dtype=np.float64)
+    lost_sales_cost = np.array([1], dtype=np.float64)
+    factory_capacities = np.array([20], dtype=np.float64)
+    dataset: Dataset = Dataset(nmb_products, nmb_factories, qualification_matrix, qualification_costs,
+                               lost_sales_cost, factory_capacities)
+    first_demand_scenario: DemandScenario = DemandScenario(product_demands=np.array([10], dtype=np.float64))
+    second_demand_scenario: DemandScenario = DemandScenario(product_demands=np.array([25], dtype=np.float64))
+    third_demand_scenario: DemandScenario = DemandScenario(product_demands=np.array([100], dtype=np.float64))
+    demand_scenarios = [first_demand_scenario, second_demand_scenario, third_demand_scenario]
+
+    solver: LargeScaleReformulationSolver = LargeScaleReformulationSolver(dataset=dataset,
+                                                                          demand_scenarios=demand_scenarios,
+                                                                          w=0.75,
+                                                                          alpha=0.95)
+    solver.solve()
+
+    assert 1.0 == pytest.approx(solver.get_qualification_costs())
+    assert 68.08333 == pytest.approx(solver.get_objective_function())
+    assert 28.33333 == pytest.approx(solver.get_expected_lost_sales())
+    assert 80.0 == pytest.approx(solver.get_cvar())

@@ -104,11 +104,14 @@ class LargeScaleReformulationSolver:
              product in self.model.products], dtype=np.float64)
 
     def get_qualification_costs(self) -> float:
-        return pyo.value(self.model.objective) - self.get_expected_lost_sales() - self.get_cvar()
+        lost_sales = (1.0 - self.w) * self.get_expected_lost_sales()
+        return pyo.value(self.model.objective) - lost_sales - self.w * self.get_cvar()
+
+    def get_objective_function(self) -> float:
+        return pyo.value(self.model.objective)
 
     def get_expected_lost_sales(self) -> float:
-        scalar = (1.0 - self.w) * self.proba_per_scenario
-        return sum(scalar * self.model.thetas[scenario].value for scenario in self.model.scenarios)
+        return sum(self.proba_per_scenario * self.model.thetas[scenario].value for scenario in self.model.scenarios)
 
     def get_cvar(self) -> float:
-        return self.w * self.model.cvar.value
+        return self.model.cvar.value
