@@ -78,7 +78,8 @@ def test_simple_problem_with_three_scenarios():
     assert 80.0 == pytest.approx(solver.get_cvar())
 
 
-@pytest.mark.parametrize("w, alpha, expected_objective_function", [(0.0, 0.0, 42.0), (1.0, 0.0, 42.0), (1.0, 0.95, 142.0),(0.50, 0.50, 62.0)])
+@pytest.mark.parametrize("w, alpha, expected_objective_function",
+                         [(0.0, 0.0, 42.0), (1.0, 0.0, 42.0), (1.0, 0.95, 142.0), (0.50, 0.50, 62.0)])
 def test_simple_problem_with_two_products_dedicated_factories(w, alpha, expected_objective_function):
     nmb_products = 2
     nmb_factories = 2
