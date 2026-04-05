@@ -13,7 +13,6 @@ class LargeScaleReformulationSolver:
         self.demand_scenarios = demand_scenarios
         self.model = pyo.ConcreteModel()
         self.solver = pyo.SolverFactory('appsi_highs')
-        self.solver.options['time_limit'] = 60
         nmb_scenarios = len(demand_scenarios)
         self.proba_per_scenario = 1.0 / float(nmb_scenarios)
         self.w = w
