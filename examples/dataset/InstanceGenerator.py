@@ -28,10 +28,10 @@ def generate_instance(seed: int) -> Tuple[Dataset, list[DemandScenario]]:
     # Generate dataset.
     qualification_matrix = np.array(local_rng.uniform(0.0, 1.0, size=(nmb_products, nmb_factories,)) <= 0.50,
                                     dtype=np.float64)
-    qualification_costs = local_rng.uniform(1.0, 50.0, size=(nmb_products, nmb_factories,))
-    lost_sales_cost = local_rng.uniform(1.0, 10000.0, size=(nmb_products,))
+    qualification_costs = local_rng.uniform(1.0, 1000.0, size=(nmb_products, nmb_factories,))
+    lost_sales_cost = local_rng.uniform(1.0, 10.0, size=(nmb_products,))
     total_demand_per_factory = maximum_total_demand / nmb_factories
-    factory_capacities = local_rng.uniform(total_demand_per_factory * 0.80, total_demand_per_factory * 1.20,
+    factory_capacities = local_rng.uniform(total_demand_per_factory * 0.90, total_demand_per_factory,
                                            size=(nmb_factories,))
     dataset: Dataset = Dataset(nmb_products, nmb_factories, qualification_matrix, qualification_costs, lost_sales_cost,
                                factory_capacities)

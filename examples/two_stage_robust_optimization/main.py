@@ -4,8 +4,6 @@ from src.solver.robust.CCGSolver import CCGSolver
 
 def main(seed: int):
     dataset, demand_scenarios = generate_instance(seed=seed)
-
-    # Solve two-stage robust optimization problem.
     solver: CCGSolver = CCGSolver(dataset)
     solver.solve(demand_scenarios=demand_scenarios)
     qualification_costs = solver.get_qualification_costs()

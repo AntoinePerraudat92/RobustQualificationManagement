@@ -4,8 +4,6 @@ from src.solver.stochastic.BendersDecompositionSolver import BendersDecompositio
 
 def main(seed: int):
     dataset, demand_scenarios = generate_instance(seed=seed)
-
-    # Solve two-stage robust optimization problem.
     solver: BendersDecompositionSolver = BendersDecompositionSolver(dataset=dataset, demand_scenarios=demand_scenarios)
     solver.solve()
     qualification_costs = solver.get_qualification_costs()

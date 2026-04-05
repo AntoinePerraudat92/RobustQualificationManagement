@@ -7,12 +7,7 @@ from tqdm import tqdm
 from src.data_model.Dataset import Dataset
 from src.data_model.DemandScenario import DemandScenario
 from src.solver.stochastic.DualRecourseProblem import DualRecourseProblem
-
-
-def compute_gap(lb: float, ub: float) -> float:
-    if abs(lb) == math.inf or abs(ub) == math.inf:
-        return 100
-    return abs(ub - lb) / (lb + 1E-10) * 100
+from src.util.gap_util import compute_gap
 
 
 class BendersDecompositionSolver:
@@ -43,12 +38,13 @@ class BendersDecompositionSolver:
 
         # Qualification constraints.
         def qualification_constraint_rule(model, product, factory):
-            return model.qualification_variables[product, factory] <= self.dataset.qualification_matrix[product][factory]
+            return model.qualification_variables[product, factory] <= self.dataset.qualification_matrix[product][
+                factory]
 
         self.model.qualification_constraints = pyo.Constraint(self.model.products, self.model.factories,
                                                               rule=qualification_constraint_rule)
 
-    def run(self):
+    def run(self) -> bool:
         results = self.solver.solve(self.model)
         return (results.solver.termination_condition == pyo.TerminationCondition.optimal
                 or results.solver.termination_condition == pyo.TerminationCondition.feasible)
