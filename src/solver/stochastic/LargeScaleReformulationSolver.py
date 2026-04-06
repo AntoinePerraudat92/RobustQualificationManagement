@@ -83,13 +83,13 @@ class LargeScaleReformulationSolver:
         def beta_constraint_rule(model, scenario):
             return model.betas[scenario] >= model.thetas[scenario] - model.eta
 
-        self.model.cvar_constraint_1 = pyo.Constraint(self.model.scenarios, rule=beta_constraint_rule)
+        self.model.beta_constraints = pyo.Constraint(self.model.scenarios, rule=beta_constraint_rule)
 
         def cvar_constraint_rule(model):
             scalar = 1.0 / (1.0 - alpha) * self.proba_per_scenario
             return model.eta + sum(scalar * model.betas[scenario] for scenario in model.scenarios) <= model.cvar
 
-        self.model.cvar_constraint_2 = pyo.Constraint(rule=cvar_constraint_rule)
+        self.model.cvar_constraints = pyo.Constraint(rule=cvar_constraint_rule)
 
     def solve(self) -> bool:
         results = self.solver.solve(self.model, tee=True)
